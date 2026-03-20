@@ -1,8 +1,8 @@
 # app.py
 import streamlit as st
 from PIL import Image
-import torch
-import remedies  # your remedies.py file
+from ultralytics import YOLO
+import remedies  # your remedies.py
 
 # ---------------------------
 # Page Configuration
@@ -14,21 +14,20 @@ st.set_page_config(
 )
 
 st.title("🌿 Plant Disease Detection")
-st.write("Upload a leaf image or take a photo with your webcam to get disease prediction along with remedies.")
+st.write("Upload a leaf image or take a photo to get disease prediction and remedies.")
 
 # ---------------------------
-# Load Model
+# Load YOLO model
 # ---------------------------
 @st.cache_resource
 def load_model():
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt', force_reload=True)
-    model.eval()
+    model = YOLO("best.pt")  # load your custom classification model
     return model
 
 model = load_model()
 
 # ---------------------------
-# Image Input
+# Image input
 # ---------------------------
 choice = st.radio("Select input method:", ["Upload Image", "Use Webcam"])
 
@@ -43,22 +42,21 @@ elif choice == "Use Webcam":
         image = Image.open(webcam_image).convert("RGB")
 
 # ---------------------------
-# Display Image & Predict
+# Prediction
 # ---------------------------
 if image:
     st.image(image, caption="Input Image", use_column_width=True)
 
     with st.spinner("Predicting..."):
-        results = model([image])
-        class_id = int(results.pred[0][0, -1])
-        prediction = results.names[class_id]
+        results = model.predict(image)
+        # Assuming classification: get the top predicted class
+        prediction = results[0].names[int(results[0].probs.argmax())]  # classification label
         st.success(f"**Prediction:** {prediction}")
 
         # Remedies
         if hasattr(remedies, prediction):
-            remedy_text = getattr(remedies, prediction)
             st.markdown(f"### Remedies for {prediction}:")
-            st.write(remedy_text)
+            st.write(getattr(remedies, prediction))
         else:
             st.write("Remedy not found for this disease.")
 
@@ -66,4 +64,4 @@ if image:
 # Footer
 # ---------------------------
 st.write("---")
-st.write("Model trained with YOLOv5. Classification only, no bounding boxes.")
+st.write("Model trained with YOLOv8. Classification only, no bounding boxes.")
