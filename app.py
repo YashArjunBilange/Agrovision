@@ -59,6 +59,10 @@ if image:
             st.error("Cannot extract prediction from this model. Ensure it is a YOLOv8 classification model.")
 
         if pred_tensor is not None:
+            # Flatten batch if needed
+            if pred_tensor.ndim == 2 and pred_tensor.shape[0] == 1:
+                pred_tensor = pred_tensor[0]  # shape: [num_classes]
+
             # Top-3 predictions
             top_probs, top_idxs = torch.topk(pred_tensor, k=min(3, len(pred_tensor)))
             top_probs = top_probs.softmax(dim=0)  # convert logits to probabilities
