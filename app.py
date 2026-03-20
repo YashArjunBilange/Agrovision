@@ -49,12 +49,12 @@ if image:
 
     with st.spinner("Predicting..."):
         results = model.predict(image)
-        try:
-            class_idx = int(results[0].probs.argmax())  # top probability
+        
+        if hasattr(results[0], "probs"):
+            class_idx = int(results[0].probs.argmax())  # index of highest probability
             prediction = results[0].names[class_idx]
-        except AttributeError:
-            # fallback if probs not available
-            prediction = results[0].names[int(results[0].boxes.cls[0])]
+        else:
+            st.error("The model is not a classification model or .probs attribute is missing")
             
         st.success(f"**Prediction:** {prediction}")
 
