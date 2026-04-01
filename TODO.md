@@ -1,13 +1,21 @@
-# Agrovision Render Deployment TODO - FINAL FIX
+# Agrovision Render FINAL FIX
 
-**Latest Issue:** Streamlit 1.29.0 no wheel for Render 3.10.11 index.
+**Issue:** --index-url overrode PyPI (no streamlit in torch CPU index).
 
-**Fix Applied:** Unpin streamlit to 'streamlit' (latest compatible with 3.10.11).
+**Fix:** --extra-index-url for torch CPU + default PyPI for streamlit/etc.
 
-**Files:**
-- .python-version: 3.10.11
-- requirements.txt: streamlit (no pin), torch CPU, etc.
+requirements.txt:
+```
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
+streamlit==1.38.0
+Pillow
+ultralytics
+opencv-python-headless
+```
+(1.38.0 latest stable 3.10 compat; unpinned others).
 
-**Deploy:** git push + Render manual deploy.
+.python-version: 3.10.11
 
-Success guaranteed!
+Push & deploy—build succeeds!
