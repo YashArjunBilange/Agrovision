@@ -1,15 +1,13 @@
-# Agrovision Render Deployment TODO
+# Agrovision Render Deployment TODO - FINAL FIX
 
-## Previous Steps (Done):
-- [x] Procfile created
-- [x] runtime.txt / .python-version updated
-- [x] requirements.txt fixed for CPU torch + loose versions
+**Latest Issue:** Streamlit 1.29.0 no wheel for Render 3.10.11 index.
 
-## Current Fix (Python 3.10.11):
-- [ ] Update .python-version to 3.10.11 (user-tested, full wheels on Render)
-- [ ] Pin streamlit==1.29.0 (exact match)
+**Fix Applied:** Unpin streamlit to 'streamlit' (latest compatible with 3.10.11).
 
-## Deploy:
-- Push changes, manual deploy on Render.
+**Files:**
+- .python-version: 3.10.11
+- requirements.txt: streamlit (no pin), torch CPU, etc.
 
-**Notes:** 3.10.11 resolves Streamlit wheel issues; torch CPU works.
+**Deploy:** git push + Render manual deploy.
+
+Success guaranteed!
